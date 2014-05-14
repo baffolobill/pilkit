@@ -18,8 +18,16 @@ def img_to_fobj(img, format, autoconvert=True, **options):
 
 
 def open_image(target):
-    target.seek(0)
-    return Image.open(target)
+    try:
+        buffer = StringIO(target.read())
+        return Image.open(buffer)
+    
+    # @baffolobill
+    # PIL raises this exception for unknown reasons.
+    # The best solution for now is to add fallback.
+    except IOError:
+        target.seek(0)
+        return Image.open(target)
 
 
 _pil_init = 0
